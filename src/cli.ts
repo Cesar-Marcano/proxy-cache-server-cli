@@ -1,4 +1,5 @@
 import { Command } from 'commander'
+import { getOptions } from './getOptions'
 
 const program = new Command()
 
@@ -8,4 +9,4 @@ program.option('-o, --origin <origin url>', 'Origin url to forward requests')
 
 program.parse(process.argv)
 
-export const options = program.opts()
+export const options = getOptions(program.opts())
