@@ -3,12 +3,23 @@ import { ForwardClient } from '../utils/fetcher'
 import { buildQueryString } from '../utils/buildQueryString'
 import { CacheService } from './cacheService'
 import { extractHeaders } from '../utils/extractHeaders'
+import { redis } from '../utils/redis'
 
 export class ProxyService {
   private forwardClient: ForwardClient
+  private cacheService: CacheService
 
-  constructor(origin: string, forwardClient?: ForwardClient) {
-    this.forwardClient = forwardClient ?? new ForwardClient(origin)
+  constructor(
+    origin: string,
+    services: {
+      forwardClient?: ForwardClient
+      cacheService?: { instance?: CacheService; redisClient?: typeof redis }
+    },
+  ) {
+    this.forwardClient = services.forwardClient ?? new ForwardClient(origin)
+    this.cacheService =
+      services.cacheService?.instance ??
+      new CacheService(services.cacheService?.redisClient ?? redis)
   }
 
   public async handleRequest(req: Request, res: Response): Promise<void> {
@@ -25,24 +36,24 @@ export class ProxyService {
       }
 
       const cacheKey = `${method}:${path}`
-      const cachedData = await CacheService.get(cacheKey)
+      const cachedData = await this.cacheService.get(cacheKey)
 
       if (cachedData) {
         res.setHeader('X-Cache', 'HIT')
         res.json(cachedData.data)
         return
       }
-      
+
       const headers = extractHeaders(req.headers)
       const response = await this.forwardClient.fetch(
-          path,
-          headers,
+        path,
+        headers,
         method,
         body,
-    )
+      )
 
-    await CacheService.set(cacheKey, { data: response.data }, 3600)
-    res.setHeader('X-Cache', 'MISS')
+      await this.cacheService.set(cacheKey, { data: response.data }, 3600)
+      res.setHeader('X-Cache', 'MISS')
       res.json(response.data)
     } catch (error) {
       res.status(500).json({
