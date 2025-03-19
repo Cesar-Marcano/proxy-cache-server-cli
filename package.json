@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "axios": "^1.8.3",
+    "commander": "^13.1.0",
     "express": "^4.21.2",
     "ioredis": "^5.6.0"
   }
