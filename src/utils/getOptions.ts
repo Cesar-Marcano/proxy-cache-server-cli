@@ -1,5 +1,5 @@
 import { OptionValues } from 'commander'
-import { Options } from './types'
+import { Options } from '../types'
 import { normalizeUrl } from './normalizeUrl'
 
 function validatePort(port: string): number {
