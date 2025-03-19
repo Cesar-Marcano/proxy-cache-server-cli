@@ -32,5 +32,6 @@ export function getOptions(opt: OptionValues): Options {
     redisUrl: validateRedisUrl(opt.redis),
     port: validatePort(opt.port),
     origin: validateOrigin(normalizeUrl(opt.origin)),
+    clearCache: opt.clearCache || false,
   }
 }

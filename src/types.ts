@@ -2,7 +2,7 @@ export interface Options {
   redisUrl: string
   port: number
   origin: string
-  clearCache?: boolean
+  clearCache: boolean
 }
 
 export enum ContentType {

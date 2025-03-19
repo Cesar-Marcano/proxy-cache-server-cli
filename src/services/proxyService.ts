@@ -11,15 +11,15 @@ export class ProxyService {
 
   constructor(
     origin: string,
-    services: {
+    services?: {
       forwardClient?: ForwardClient
       cacheService?: { instance?: CacheService; redisClient?: typeof redis }
     },
   ) {
-    this.forwardClient = services.forwardClient ?? new ForwardClient(origin)
+    this.forwardClient = services?.forwardClient ?? new ForwardClient(origin)
     this.cacheService =
-      services.cacheService?.instance ??
-      new CacheService(services.cacheService?.redisClient ?? redis)
+      services?.cacheService?.instance ??
+      new CacheService(services?.cacheService?.redisClient ?? redis)
   }
 
   public async handleRequest(req: Request, res: Response): Promise<void> {
