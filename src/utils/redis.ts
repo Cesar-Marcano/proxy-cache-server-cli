@@ -13,7 +13,7 @@ class RedisClient {
 
   public static getInstance(): IORedis {
     if (!this.instance) {
-      console.log(`🔗 Conectando a Redis en: ${this.redisUrl}`)
+      console.log('🔗 Connecting to redis')
 
       this.instance = new IORedis(this.redisUrl)
 
