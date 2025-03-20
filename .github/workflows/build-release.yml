@@ -58,8 +58,6 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          files: |
-            build/*
           draft: false
           prerelease: false
 
