@@ -3,6 +3,7 @@ name: Build and Release
 permissions:
   contents: write
   deployments: write
+  packages: write
 
 on:
   push:
@@ -31,7 +32,6 @@ jobs:
 
       - name: Verify build output
         run: ls -la dist
-      
 
       - name: Create package
         run: pnpm run package
@@ -58,11 +58,16 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Verify release files
+        run: |
+          ls -la build/redis-cache-proxy-linux
+          ls -la build/redis-cache-proxy-macos
+          ls -la build/redis-cache-proxy-win.exe
+
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            build/redis-cache-proxy-linux
-            build/redis-cache-proxy-macos
-            build/redis-cache-proxy-win.exe
-
+            ./build/redis-cache-proxy-linux
+            ./build/redis-cache-proxy-macos
+            ./build/redis-cache-proxy-win.exe

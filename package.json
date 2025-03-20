@@ -11,7 +11,7 @@
     "start:ts-node": "ts-node ./src/index.ts",
     "start:dev": "ts-node ./src/index.ts --port 3000 --origin dummyjson.com",
     "build": "tsc",
-    "package": "pkg . --targets node18-linux-x64,node18-macos-x64,node18-win-x64 --output ./build/redis-cache-proxy --compress GZip",
+    "package": "pkg . --targets node18-linux-x64,node18-macos-x64,node18-win-x64 --output ./build/redis-cache-proxy --compress GZip --quiet",
     "lint": "prettier --check .",
     "format": "prettier --write .",
     "test": "jest"
