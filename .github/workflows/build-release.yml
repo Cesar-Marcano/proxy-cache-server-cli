@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Run tests
+        run: pnpm test
+
       - name: Build project
         run: pnpm run build
 
@@ -28,11 +31,16 @@ jobs:
       - name: Create package
         run: pnpm run package
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
-          path: dist/
+          name: build-artifact
+          path: build/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+          overwrite: true
+          include-hidden-files: false
 
   release:
     runs-on: ubuntu-latest
@@ -41,12 +49,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build-artifacts
-          path: dist/
 
       - name: Create Release
         id: create_release
@@ -57,6 +59,18 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           files: |
-            dist/*
+            build/*
           draft: false
           prerelease: false
+
+      - name: Upload release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets
+          path: build/*
+          if-no-files-found: warn 
+          retention-days: 90
+          compression-level: 3
+          overwrite: false
+          include-hidden-files: false
+
