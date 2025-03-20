@@ -14,7 +14,8 @@
     "package": "pkg . --targets node18-linux-x64,node18-macos-x64,node18-win-x64 --output ./build/redis-cache-proxy --compress GZip --quiet",
     "lint": "prettier --check .",
     "format": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "find-deadcode": "ts-prune"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +29,7 @@
     "prettier": "^3.5.3",
     "ts-jest": "^29.2.6",
     "ts-node": "^10.9.2",
+    "ts-prune": "^0.10.3",
     "typescript": "^5.8.2"
   },
   "dependencies": {
