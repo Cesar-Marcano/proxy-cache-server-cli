@@ -20,10 +20,13 @@ jobs:
       run: pnpm install
 
     - name: Build project
-      run: pnpm build
+      run: pnpm run build
+
+    - name: Verify build output
+      run: ls -la dist
 
     - name: Create package
-      run: pnpm package
+      run: pnpm run package
 
   release:
     runs-on: ubuntu-latest
