@@ -39,17 +39,6 @@ jobs:
       - name: List package output
         run: ls -la build
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifact
-          path: build/*
-          if-no-files-found: error
-          retention-days: 30
-          compression-level: 6
-          overwrite: true
-          include-hidden-files: false
-
   release:
     runs-on: ubuntu-latest
     needs: build
@@ -70,13 +59,10 @@ jobs:
           prerelease: false
 
       - name: Upload release assets
-        uses: actions/upload-artifact@v4
+        uses: softprops/action-gh-release@v2
         with:
-          name: release-assets
-          path: build/*
-          if-no-files-found: warn 
-          retention-days: 90
-          compression-level: 3
-          overwrite: false
-          include-hidden-files: false
+          files: |
+            build/redis-cache-proxy-linux
+            build/redis-cache-proxy-macos
+            build/redis-cache-proxy-win.exe
 
