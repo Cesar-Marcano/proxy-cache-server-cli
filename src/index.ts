@@ -13,7 +13,12 @@ async function runServer() {
     return process.exit(0)
   }
 
-  const proxyServer = new ProxyServer(options.origin, options.port)
+  const proxyServer = new ProxyServer(
+    options.origin,
+    options.port,
+    redis,
+    options.ttl,
+  )
 
   proxyServer.start()
 }

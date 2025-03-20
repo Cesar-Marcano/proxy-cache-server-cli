@@ -71,8 +71,7 @@ export class ProxyService {
       await this.cacheService.set(
         cacheKey,
         responseContentType,
-        response.data,
-        3600,
+        response.data
       )
 
       res.setHeader('X-Cache', 'MISS')

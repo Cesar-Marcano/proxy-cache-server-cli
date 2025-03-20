@@ -2,9 +2,11 @@ import { redis } from '../utils/redis'
 
 export class CacheService {
   private readonly redis: typeof redis
+  private readonly ttl: number = 3600
 
-  constructor(redisClient: typeof redis) {
+  constructor(redisClient: typeof redis, ttl?: number) {
     this.redis = redisClient
+    this.ttl = ttl || this.ttl
   }
 
   public async get(
@@ -32,7 +34,7 @@ export class CacheService {
     key: string,
     contentType: string,
     value: any,
-    expiration: number = 3600,
+    expiration: number = this.ttl,
   ): Promise<void> {
     let storedValue
 

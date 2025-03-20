@@ -33,5 +33,6 @@ export function getOptions(opt: OptionValues): Options {
     port: validatePort(opt.port),
     origin: validateOrigin(normalizeUrl(opt.origin)),
     clearCache: opt.clearCache || false,
+    ttl: opt.ttl ? parseInt(opt.ttl, 10) : 3600,
   }
 }

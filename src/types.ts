@@ -3,4 +3,5 @@ export interface Options {
   port: number
   origin: string
   clearCache: boolean
+  ttl: number
 }
