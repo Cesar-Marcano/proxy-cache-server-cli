@@ -4,8 +4,12 @@ import { buildQueryString } from '../utils/buildQueryString'
 import { CacheService } from './cacheService'
 import { extractHeaders } from '../utils/extractHeaders'
 import { redis } from '../utils/redis'
-import { AxiosResponse } from 'axios'
 import { getAxiosContentType } from '../utils/getAxiosContentType'
+import { getFinalPath } from '../utils/getFinalPath'
+import { setCacheHeaders } from '../utils/setCacheHeaders'
+import { setContentType } from '../utils/setContentType'
+import { handleErrorFromOrigin } from '../utils/handleErrorFromOrigin'
+import { handleNoResponseFromOrigin } from '../utils/handleNoResponseFromOrigin'
 
 export class ProxyService {
   private forwardClient: ForwardClient
@@ -38,8 +42,8 @@ export class ProxyService {
       const cachedResponse = await this.getCache(this.cacheKey)
 
       if (cachedResponse) {
-        this.setCacheHeaders(res, 'HIT')
-        this.setContentType(res, cachedResponse.contentType)
+        setCacheHeaders(res, 'HIT')
+        setContentType(res, cachedResponse.contentType)
 
         res.send(cachedResponse.data)
         return
@@ -48,11 +52,11 @@ export class ProxyService {
       const axiosResponse = await this.fetchOrigin(fetchData)
 
       if (axiosResponse && axiosResponse.status >= 400) {
-        return this.handleErrorFromOrigin(axiosResponse, res)
+        return handleErrorFromOrigin(axiosResponse, res)
       }
 
       if (!axiosResponse || !axiosResponse.data) {
-        return this.handleNoResponseFromOrigin(res)
+        return handleNoResponseFromOrigin(res)
       }
 
       const responseContentType = getAxiosContentType(axiosResponse)
@@ -63,8 +67,8 @@ export class ProxyService {
         axiosResponse.data,
       )
 
-      this.setCacheHeaders(res, 'MISS')
-      this.setContentType(res, responseContentType)
+      setCacheHeaders(res, 'MISS')
+      setContentType(res, responseContentType)
       res.status(axiosResponse.status).send(axiosResponse.data)
     } catch (error) {
       res.status(500).json({
@@ -88,39 +92,20 @@ export class ProxyService {
   }
 
   private getFetchData(req: Request) {
+    const queryString = buildQueryString(
+      req.query as Record<string, string | string[]>,
+    )
+
+    const path = req.params.path || ''
+
     return {
+      path,
       method: req.method.toLocaleLowerCase(),
-      path: req.params.path || '',
       headers: extractHeaders(req.headers),
-      queryString: buildQueryString(
-        req.query as Record<string, string | string[]>,
-      ),
+      queryString,
       body: req.body || {},
-      getFinalPath() {
-        let finalPath = this.path
-        if (this.queryString) {
-          finalPath += `?${this.queryString}`
-        }
-        return finalPath
-      },
+      getFinalPath: () => getFinalPath(path, queryString),
     }
-  }
-
-  private handleErrorFromOrigin(axiosResponse: AxiosResponse, res: Response) {
-    res.status(axiosResponse.status).json({
-      error: `Error from origin: ${axiosResponse.status} ${axiosResponse.statusText}`,
-    })
-  }
-
-  private handleNoResponseFromOrigin(res: Response) {
-    res.status(502).json({ error: 'Bad Gateway: No response from origin' })
-  }
-
-  private setCacheHeaders(res: Response, cacheStatus: 'HIT' | 'MISS') {
-    res.setHeader('X-Cache', cacheStatus)
-  }
-  private setContentType(res: Response, contentType: string) {
-    res.setHeader('Content-Type', contentType)
   }
 
   private setCacheKey(method: string, path: string) {
