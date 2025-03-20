@@ -75,10 +75,7 @@ jobs:
           prerelease: false
 
       - name: Verify release files
-        run: |
-          ls -la build/redis-cache-proxy-linux
-          ls -la build/redis-cache-proxy-macos
-          ls -la build/redis-cache-proxy-win.exe
+        run: ls -R
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
