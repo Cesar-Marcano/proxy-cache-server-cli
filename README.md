@@ -4,7 +4,7 @@ A lightweight and configurable proxy server that uses Redis to cache responses f
 
 ## Origin
 
-This project is inspired by the [roadmap.sh](https://roadmap.sh) projects for backend development.
+This project is inspired by the [roadmap.sh](https://roadmap.sh/projects/caching-server) projects for backend development.
 
 #### Example Command
 
