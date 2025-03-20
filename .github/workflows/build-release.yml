@@ -35,6 +35,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Create Tag
+      run: |
+        VERSION=$(date +'%Y.%m.%d.%H.%M.%S')
+        git tag -a "v$VERSION" -m "Release $VERSION"
+        git push origin "v$VERSION"
+
       - name: Set up GitHub release
         uses: softprops/action-gh-release@v1
         with:
