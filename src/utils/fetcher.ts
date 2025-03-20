@@ -19,6 +19,7 @@ export class ForwardClient {
         method,
         url,
         data,
+        validateStatus: () => true, // Do not throw for non-2xx responses
       })
 
       return response

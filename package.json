@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "ts-node ./src/index.ts",
-    "dev:start": "ts-node ./src/index.ts --port 3000 --origin dummyjson.com",
+    "start:dev": "ts-node ./src/index.ts --port 3000 --origin dummyjson.com",
     "build": "tsc",
     "package": "pkg . --targets node18-linux-x64,node18-macos-x64,node18-win-x64 --output ./build/redis-cache-proxy --compress GZip",
     "lint": "prettier --check .",

@@ -53,6 +53,13 @@ export class ProxyService {
         body,
       )
 
+      if (response.status >= 400) {
+        res.status(response.status).json({
+          error: `Error from origin: ${response.status} ${response.statusText}`,
+        })
+        return
+      }
+
       if (!response || !response.data) {
         res.status(502).json({ error: 'Bad Gateway: No response from origin' })
         return
@@ -70,7 +77,7 @@ export class ProxyService {
 
       res.setHeader('X-Cache', 'MISS')
       res.setHeader('Content-Type', responseContentType)
-      res.send(response.data)
+      res.status(response.status).send(response.data)
     } catch (error) {
       res.status(500).json({
         error: `Error processing request: ${error instanceof Error ? error.message : 'Unknown error'}`,
