@@ -29,7 +29,7 @@ function validateOrigin(origin: string): string {
 
 export function getOptions(opt: OptionValues): Options {
   return {
-    redisUrl: validateRedisUrl(opt.redisUrl),
+    redisUrl: process.env['REDIS_URL'] ?? validateRedisUrl(opt.redisUrl),
     port: validatePort(opt.port),
     origin: validateOrigin(normalizeUrl(opt.origin)),
     clearCache: opt.clearCache || false,
