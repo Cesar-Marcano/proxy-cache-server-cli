@@ -41,6 +41,8 @@ jobs:
           git config --global user.name "${{ secrets.USER_NAME }}"
 
       - name: Create Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           VERSION=$(date +'%Y.%m.%d.%H.%M.%S')
           git tag -a "v$VERSION" -m "Release $VERSION"
@@ -50,7 +52,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            dist/*
             build/*
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
