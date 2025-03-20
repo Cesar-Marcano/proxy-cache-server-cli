@@ -31,9 +31,13 @@ jobs:
 
       - name: Verify build output
         run: ls -la dist
+      
 
       - name: Create package
         run: pnpm run package
+
+      - name: List package output
+        run: ls -la build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
