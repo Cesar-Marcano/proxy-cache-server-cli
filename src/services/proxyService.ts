@@ -25,7 +25,7 @@ export class ProxyService {
   public async handleRequest(req: Request, res: Response): Promise<void> {
     try {
       const method = req.method.toLowerCase()
-      let path = req.params.path
+      let path = req.params.path || ''
       const body = req.body || {}
       const queryString = buildQueryString(
         req.query as Record<string, string | string[]>,
@@ -36,11 +36,12 @@ export class ProxyService {
       }
 
       const cacheKey = `${method}:${path}`
-      const cachedData = await this.cacheService.get(cacheKey)
+      const cachedResponse = await this.cacheService.get(cacheKey)
 
-      if (cachedData) {
+      if (cachedResponse) {
         res.setHeader('X-Cache', 'HIT')
-        res.json(cachedData.data)
+        res.setHeader('Content-Type', cachedResponse.contentType)
+        res.send(cachedResponse.data)
         return
       }
 
@@ -52,9 +53,24 @@ export class ProxyService {
         body,
       )
 
-      await this.cacheService.set(cacheKey, { data: response.data }, 3600)
+      if (!response || !response.data) {
+        res.status(502).json({ error: 'Bad Gateway: No response from origin' })
+        return
+      }
+
+      const responseContentType =
+        response.headers?.['content-type'] || 'application/octet-stream'
+
+      await this.cacheService.set(
+        cacheKey,
+        responseContentType,
+        response.data,
+        3600,
+      )
+
       res.setHeader('X-Cache', 'MISS')
-      res.json(response.data)
+      res.setHeader('Content-Type', responseContentType)
+      res.send(response.data)
     } catch (error) {
       res.status(500).json({
         error: `Error processing request: ${error instanceof Error ? error.message : 'Unknown error'}`,

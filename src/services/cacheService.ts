@@ -7,17 +7,49 @@ export class CacheService {
     this.redis = redisClient
   }
 
-  public async get(key: string): Promise<Record<string, any> | null> {
+  public async get(
+    key: string,
+  ): Promise<{ contentType: string; data: any } | null> {
     const data = await this.redis.get(key)
 
-    return data ? JSON.parse(data) : null
+    if (!data) return null
+
+    try {
+      const parsed = JSON.parse(data)
+      if (parsed.isBase64) {
+        return {
+          contentType: parsed.contentType,
+          data: Buffer.from(parsed.data, 'base64'),
+        }
+      }
+      return parsed
+    } catch {
+      return null
+    }
   }
 
   public async set(
     key: string,
-    value: Record<string, any>,
+    contentType: string,
+    value: any,
     expiration: number = 3600,
   ): Promise<void> {
-    await this.redis.set(key, JSON.stringify(value), 'EX', expiration)
+    let storedValue
+
+    if (
+      contentType.startsWith('text/') ||
+      contentType.includes('json') ||
+      contentType.includes('xml')
+    ) {
+      storedValue = JSON.stringify({ contentType, data: value })
+    } else {
+      storedValue = JSON.stringify({
+        contentType,
+        data: Buffer.from(value).toString('base64'),
+        isBase64: true,
+      })
+    }
+
+    await this.redis.set(key, storedValue, 'EX', expiration)
   }
 }
