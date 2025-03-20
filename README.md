@@ -119,7 +119,7 @@ docker run \
   proxy-cache-server-cli --port <PORT> --origin <YOUR_FORWARD_URL_HERE>
 ```
 
-Replace `<PORT>` with whatever you want and `<YOUR_FORWARD_URL_HERE>` with the domain you want to cache (ex. https://jsondummy.com).
+Replace `<PORT>` with whatever you want and `<YOUR_FORWARD_URL_HERE>` with the domain you want to cache (ex. https://dummyjson.com).
 
 ### Docker Compose
 
