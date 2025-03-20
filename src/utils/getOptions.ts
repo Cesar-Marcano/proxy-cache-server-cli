@@ -18,18 +18,18 @@ function validateRedisUrl(redisUrl: string): string {
 }
 
 function validateOrigin(origin: string): string {
-  const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i
+  const urlPattern = /\b((http|https):\/\/)?(www\.)?([a-zA-Z0-9-]+\.[a-zA-Z]{2,})(\/[a-zA-Z0-9#-]+\/?)*\b/i
 
   if (!urlPattern.test(origin)) {
     throw new Error(`Invalid origin URL: ${origin}`)
   }
-
+  
   return origin
 }
 
 export function getOptions(opt: OptionValues): Options {
   return {
-    redisUrl: validateRedisUrl(opt.redis),
+    redisUrl: validateRedisUrl(opt.redisUrl),
     port: validatePort(opt.port),
     origin: validateOrigin(normalizeUrl(opt.origin)),
     clearCache: opt.clearCache || false,
