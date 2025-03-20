@@ -1,42 +1,42 @@
 import { buildQueryString } from '../src/utils/buildQueryString'
 
 describe('buildQueryString', () => {
-  it('debería construir una cadena de consulta correcta para parámetros simples', () => {
+  it('Should build a correct query string', () => {
     const queryParams = { search: 'test', page: '1' }
     const result = buildQueryString(queryParams)
 
     expect(result).toBe('search=test&page=1')
   })
 
-  it('debería construir una cadena de consulta correcta para parámetros con múltiples valores', () => {
+  it('Should build a correct query string with multiple params', () => {
     const queryParams = { search: 'test', tags: ['node', 'typescript'] }
     const result = buildQueryString(queryParams)
 
     expect(result).toBe('search=test&tags=node%2Ctypescript')
   })
 
-  it('debería manejar correctamente parámetros con valores vacíos', () => {
+  it('Should handle params with empty values', () => {
     const queryParams = { search: '', page: '1' }
     const result = buildQueryString(queryParams)
 
     expect(result).toBe('search=&page=1')
   })
 
-  it('debería construir una cadena de consulta vacía si no se pasan parámetros', () => {
+  it('Should build a query string if no params were passed', () => {
     const queryParams = {}
     const result = buildQueryString(queryParams)
 
     expect(result).toBe('')
   })
 
-  it('debería manejar correctamente parámetros con valores especiales', () => {
+  it('Should handle params with special values', () => {
     const queryParams = { search: 'test & example', page: '1' }
     const result = buildQueryString(queryParams)
 
     expect(result).toBe('search=test%20%26%20example&page=1')
   })
 
-  it('debería manejar correctamente parámetros con valores especiales dentro de un array', () => {
+  it('Should handle params with special chars inside of an array', () => {
     const queryParams = {
       search: 'test & example',
       tags: ['node', 'typescript & react'],
